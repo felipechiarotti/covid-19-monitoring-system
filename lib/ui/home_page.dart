@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:covid/util/format_number.dart';
 import 'package:pie_chart/pie_chart.dart';
-import 'package:covid/model/Data.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
+import '../util/format_number.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -63,30 +65,77 @@ class _HomeState extends State<Home> {
       _cIndex = index;
     });
   }
+  Widget _buildInfoCard(String title, Map<String, dynamic> infos, Color color){
+    String cases = FormatNumber.formatInt(infos["cases"]);
+    String deaths = FormatNumber.formatInt(infos["deaths"]);
+    String lastDay = FormatNumber.formatInt(infos["todayDeaths"]);
+    return Container(
+        margin: EdgeInsets.only(top:10.0),
+        child:
+        Card(
+          color: color == null ? Theme.of(context).cardColor : color,
+          child:Container(
+              padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+              child:
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  AutoSizeText(
+                  title, style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                  ),),
+                  Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      AutoSizeText("Casos: " + cases.toString(), style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),textAlign: TextAlign.left,),
+                      AutoSizeText("Mortes: " + deaths.toString(), style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),textAlign: TextAlign.left,),
+                      AutoSizeText("Mortes hoje: " + lastDay.toString(), style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 15,
+                      ),textAlign: TextAlign.left,),
+                    ],
+                  )
+                ],
+              ),
 
+          ),
+        )
+
+    );
+  }
   Widget _buildCard(double width, String title, String subtitle, Color color){
     return Container(
-      margin: EdgeInsets.only(top:20.0),
+      margin: EdgeInsets.only(top:10.0),
       child:
       Card(
-          color: color,
-
+          color: color == null ? Theme.of(context).cardColor : color,
           child:Container(
             width:width,
-            padding: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
+            padding:EdgeInsets.only(top:10, bottom:10),
             child: ListTile(
-              title: Text(title, style: TextStyle(
+              title: AutoSizeText(title, style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 25,
               ),textAlign: TextAlign.center,),
-              subtitle: Text(subtitle, style: TextStyle(
-                color: Colors.white70,
-              ),textAlign: TextAlign.center,),
+
+              subtitle: AutoSizeText(subtitle, style: TextStyle(
+                    color: Colors.white70,
+                  ),textAlign: TextAlign.center,),
+
+              )
 
             ),
           )
 
-      ),
     );
   }
 
@@ -95,7 +144,7 @@ class _HomeState extends State<Home> {
       dataMap: dataMap,
       animationDuration: Duration(milliseconds: 1000),
       chartLegendSpacing: 32.0,
-      legendStyle: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+      legendStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
       chartRadius: MediaQuery.of(context).size.width ,
       showChartValuesInPercentage: true,
       showChartValues: true,
@@ -103,7 +152,7 @@ class _HomeState extends State<Home> {
       chartValueBackgroundColor: Colors.grey[200],
       colorList: colorList,
       showLegends: true,
-      legendPosition: LegendPosition.bottom,
+      legendPosition:  LegendPosition.right,
 
       decimalPlaces: 1,
       showChartValueLabel: true,
@@ -167,6 +216,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildGlobalBody(){
+    var screenSize = MediaQuery.of(context).size;
     return Center(
       child:Column(
         children: <Widget>[
@@ -178,15 +228,15 @@ class _HomeState extends State<Home> {
             ),)
             ,
           ),
-          _buildCard(370, _cases, "INFECTADOS", Colors.deepOrange[700]),
+          _buildCard(screenSize.width - 20, _cases, "INFECTADOS", Colors.deepOrange[700]),
           Container(
             margin: EdgeInsets.only(top:10.0, bottom:20.0),
             child:
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                _buildCard(170, _deaths, "MORTES", Colors.red[700]),
-                _buildCard(170, _recovered, "RECUPERADOS", Colors.green[700]),
+                _buildCard(screenSize.width / 2.2, _deaths, "MORTES", Colors.red[700]),
+                _buildCard(screenSize.width / 2.2, _recovered, "RECUPERADOS", Colors.green[700]),
               ],
             ),
           ),
@@ -199,12 +249,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildContinentCard(BuildContext context, int index){
-    return _buildCard(360, _data[index]["country"], "Casos: "+FormatNumber.formatInt(_data[index]["cases"]).toString()+" | Mortes: "+FormatNumber.formatInt(_data[index]["deaths"]).toString(), Colors.red[700]);
+    return _buildInfoCard(_data[index]["country"], _data[index] ,null);
   }
-  Widget _buildCountryCard(BuildContext context, int index){
+  Widget _buildCountryCard(BuildContext context, int index) {
     index = index + 8;
 
-    return _buildCard(360, _data[index]["country"], "Casos: "+FormatNumber.formatInt(_data[index]["cases"]).toString()+" | Mortes: "+FormatNumber.formatInt(_data[index]["deaths"]).toString(), Colors.red[700]);
+    return _buildInfoCard(_data[index]["country"], _data[index], null);
   }
 
   Widget _buildContinentBody(){

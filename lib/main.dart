@@ -7,6 +7,7 @@ void main(){
     theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.black ,
+        cardColor: Colors.red[800],
         scaffoldBackgroundColor: Colors.red[900],
         backgroundColor: Colors.white
     ),
@@ -14,6 +15,7 @@ void main(){
     darkTheme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.white70 ,
+        cardColor: Colors.red[900],
         scaffoldBackgroundColor: Colors.black12,
         backgroundColor: Colors.white12
     ),
