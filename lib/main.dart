@@ -1,9 +1,15 @@
+import 'package:covid/ui/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:covid/ui/home_page.dart';
 
 void main(){
   runApp(MaterialApp(
-
+    initialRoute: '/',
+    routes: {
+      // When navigating to the "/" route, build the FirstScreen widget.
+      // When navigating to the "/second" route, build the SecondScreen widget.
+      '/detail': (context) => Detail(),
+    },
     theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.black ,

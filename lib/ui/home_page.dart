@@ -16,7 +16,7 @@ class _HomeState extends State<Home> {
   Future _taskGlobal;
   List _data;
   List _dataCountry;
-
+  ScrollController _controller = ScrollController();
   String _cases = "";
   String _deaths = "";
   String _recovered = "";
@@ -39,7 +39,6 @@ class _HomeState extends State<Home> {
     setState(() {
       _cIndex = index;
       pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.ease);
-
     });
   }
 
@@ -69,8 +68,11 @@ class _HomeState extends State<Home> {
       dataMap.putIfAbsent("Recuperados", () => recovered);
 
     });
-    _dataCountry = _data.getRange(8, _data.length-7).toList();
+    if(_data != null) {
+      _dataCountry = _data.getRange(8, _data.length - 7).toList();
       return true;
+    }
+    return false;
   }
 
   // Build Screens
@@ -90,9 +92,29 @@ class _HomeState extends State<Home> {
     return FutureBuilder<bool>(
         future: _taskGlobal,
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.done){
+          if(snapshot.connectionState == ConnectionState.done) {
+            if(snapshot.data == true) {
+              return _buildPageView();
+            }else{
+              return Center(
 
-            return             _buildPageView();;
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+
+                      child: Icon(
+                        Icons.network_wifi,
+                        color: Colors.red[700],
+                        size: 80,
+
+                      ),
+                    ),
+                    Text("Problemas na conexão", style: TextStyle(fontSize: 18)),
+                  ],
+                )
+              );
+            }
           }else{
             return Center(
               child: SizedBox(
@@ -143,6 +165,7 @@ class _HomeState extends State<Home> {
   Widget _buildContinentBody(){
     return Center(
       child:ListView.builder(
+        controller: _controller,
           shrinkWrap: true,
           itemBuilder: _buildContinentCard,
           itemCount: 6
@@ -153,6 +176,7 @@ class _HomeState extends State<Home> {
 
     return Center(
       child:ListView.builder(
+          controller:  _controller,
           shrinkWrap: true,
           itemBuilder: _buildCountryCard,
           itemCount: _dataCountry.length
@@ -191,8 +215,18 @@ class _HomeState extends State<Home> {
     String lastDay = FormatNumber.formatInt(infos["todayDeaths"]);
     return Container(
         margin: EdgeInsets.only(top:10.0),
-        child:
-        Card(
+        child: FlatButton(
+padding: EdgeInsets.all(0),
+          onPressed: (){
+            Navigator.pushNamed(
+                context,
+                '/detail',
+                arguments: infos
+            );
+          },
+              color: Colors.transparent ,
+
+              child:Card(
           color: color == null ? Theme.of(context).cardColor : color,
           child:Container(
               padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
@@ -236,7 +270,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
 
           ),
         )
-
+        )
     );
   }
   Widget _buildCard(double width, String title, String subtitle, Color color){
@@ -299,8 +333,8 @@ crossAxisAlignment: CrossAxisAlignment.start,
 
   @override
   void initState(){
-    _taskGlobal = _getGlobalData();
     super.initState();
+    _taskGlobal = _getGlobalData();
   }
 
   @override
@@ -313,6 +347,13 @@ crossAxisAlignment: CrossAxisAlignment.start,
                 ),
                 backgroundColor: Theme.of(context).backgroundColor,
                 body: _buildFutureBuilder(_cIndex),
+      floatingActionButton: _cIndex > 0 ? FloatingActionButton(
+        onPressed: () {
+          _controller.jumpTo(_controller.position.minScrollExtent);
+        },
+        child: Icon(Icons.arrow_upward),
+        backgroundColor:  Theme.of(context).primaryColor,
+      ) : null,
                 bottomNavigationBar: _buildBottomMenu(),
             );
         }
