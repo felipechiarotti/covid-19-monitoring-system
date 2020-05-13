@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
     _data = await _getData("https://coronavirus-19-api.herokuapp.com/countries");
 
     setState(() {
-      var _worldData = _data[7];
+      var _worldData = _data[0];
       _cases = FormatNumber.formatInt( _worldData["cases"]);
       _deaths =  FormatNumber.formatInt( _worldData["deaths"]);
       _recovered =  FormatNumber.formatInt( _worldData["recovered"]);
@@ -69,7 +69,7 @@ class _HomeState extends State<Home> {
 
     });
     if(_data != null) {
-      _dataCountry = _data.getRange(8, _data.length - 7).toList();
+      _dataCountry = _data.getRange(1, _data.length).toList();
       return true;
     }
     return false;
@@ -83,7 +83,7 @@ class _HomeState extends State<Home> {
       children: <Widget>[
         _buildGlobalBody(),
         _buildCountriesBody(),
-        _buildContinentBody(),
+        //_buildContinentBody(),
       ],
     );
   }
@@ -318,10 +318,10 @@ crossAxisAlignment: CrossAxisAlignment.start,
           icon: new Icon(Icons.location_on),
           title: new Text('Países'),
         ),
-        BottomNavigationBarItem(
+        /*BottomNavigationBarItem(
           icon: new Icon(Icons.map),
           title: new Text('Continentes'),
-        ),
+        ),*/
       ],
     );
   }

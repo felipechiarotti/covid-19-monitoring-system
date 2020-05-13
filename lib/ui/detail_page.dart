@@ -112,7 +112,7 @@ class _DetailState extends State<Detail> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  _buildCard(screenSize.width - 20, _todayDeaths, "ESTADO CRÍTICO", Colors.red[700]),
+                  _buildCard(screenSize.width - 20, _critical, "ESTADO CRÍTICO", Colors.red[700]),
 
 
                 ],
